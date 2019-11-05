@@ -1,14 +1,20 @@
 import { ProductsTableService } from "./../services/products.table.service";
+import { DeleteProductService } from "./../services/delete.product.service";
 
 export class ProductsTableComponent {
     constructor() {
         this._productsTableService = new ProductsTableService();
+        this._deleteProductService = new DeleteProductService();
         this.beforeRender = this.beforeRender.bind(this);
+        this.render = this.render.bind(this);
+        this.afterRender = this.afterRender.bind(this);
     }
 
     async beforeRender() {
         this._products = await this._productsTableService.getProducts();
         console.log(this._products);
+
+        this.productList = this._products.map(this._productTemplate);
     }
 
     render() {
@@ -27,27 +33,58 @@ export class ProductsTableComponent {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <th scope="row">1</th>
-                        <td>Desk</td>
-                        <td>Wooden Desk</td>
-                        <td>900</td>
-                        <td>true</td>
-                        <td><a href="https://cdn20.pamono.com/p/g/4/8/480322_7tuep2o7lr/vintage-wooden-desk-1930s-1.jpg">Click to view</a></td>
-                        <td>Edit, Delete</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">2</th>
-                        <td>Desk</td>
-                        <td>Wooden Desk</td>
-                        <td>900</td>
-                        <td>true</td>
-                        <td><a href="https://cdn20.pamono.com/p/g/4/8/480322_7tuep2o7lr/vintage-wooden-desk-1930s-1.jpg">Click to view</a></td>
-                        <td>Edit, Delete</td>
-                    </tr>
-                   
+                    ${this.productList.join('')}
                 </tbody>
           </table></div>
         `;
     }
+
+    _productTemplate({
+        id,
+        name,
+        desc,
+        img,
+        available,
+        price
+    }) {
+        return `
+        <tr>
+            <th scope="row" class="row">${id}</th>
+            <td>${name}</td>
+            <td>${desc}</td>
+            <td>${price}</td>
+            <td>${available}</td>
+            <td><a href="${img}">Click to view</a></td>
+            <td>
+                <button type="button" class="btn btn-primary btn-sm" id="edit">Edit</button>
+                <button type="button" class="btn btn-danger btn-sm" id="delete">Delete</button>
+            </td>
+        </tr>
+        `
+    }
+
+    afterRender() {
+        const tableSelector = document.querySelector('tbody');
+
+        tableSelector.addEventListener('click', async (e) => {
+            e.preventDefault();
+
+            if(e.target.id == "delete"){
+                const productID = e.target.parentElement.parentElement.firstElementChild.innerHTML;
+
+                //call service to delete th product on backend
+                await this._deleteProductService.deleteProduct(productID);
+
+                //update the table
+                tableSelector.innerHTML = '';
+                beforeRender();
+                render();
+                afterRender();
+            }
+
+            if(e.target.id == "edit"){
+                
+            }
+        })
+    }    
 }

@@ -35,7 +35,7 @@ const router = async() => {
 
     beforeRender && await beforeRender();
     container.innerHTML = render();
-    //afterRender && await afterRender();
+    afterRender && await afterRender();
 }
 
 window.addEventListener('load', router);

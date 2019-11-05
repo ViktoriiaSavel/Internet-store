@@ -1,15 +1,14 @@
 import { ENV } from "./../config/env";
 import { Http } from "./../core/http.service";
 
-export class ProductsTableService {
-    getProducts(){
+export class DeleteProductService {
+    deleteProduct(id){
         const http = new Http();
-        console.log(ProductsTableService)
-
 
         return new Promise((resolve, reject) => {
-            http.get(`${ENV.apiUrl}/products`)
+            http.delete(`${ENV.apiUrl}/products/${id}`)
             .then((response) => {
+                console.log(response);
                 resolve(response);
             })
             .catch((err) => reject(err));

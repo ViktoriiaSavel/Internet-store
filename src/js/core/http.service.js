@@ -8,7 +8,7 @@ export class Http {
         });
     }
   
-    post(url, data, options) {
+    post(url, data) {
         return new Promise((resolve, reject) => {
             fetch(url, {
                 method: 'POST',
@@ -16,6 +16,17 @@ export class Http {
                 headers: {
                     'Content-type': 'application/json'
                 }
+            })
+            .then((responce => responce.json()))
+            .then((data) => resolve(data))
+            .catch((err) => reject(err));
+        })
+    }
+
+    delete(url) {
+        return new Promise((resolve, reject) => {
+            fetch(url, {
+                method: 'delete'
             })
             .then((responce => responce.json()))
             .then((data) => resolve(data))
