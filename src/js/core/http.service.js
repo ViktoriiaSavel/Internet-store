@@ -23,6 +23,21 @@ export class Http {
         })
     }
 
+    put(url, data) {
+        return new Promise((resolve, reject) => {
+            fetch(url, {
+                method: 'PUT',
+                body: JSON.stringify(data),
+                headers: {
+                    'Content-type': 'application/json'
+                }
+            })
+            .then((responce => responce.json()))
+            .then((data) => resolve(data))
+            .catch((err) => reject(err));
+        })
+    }
+
     delete(url) {
         return new Promise((resolve, reject) => {
             fetch(url, {
